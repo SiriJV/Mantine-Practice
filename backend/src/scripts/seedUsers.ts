@@ -1,157 +1,88 @@
 import { db } from '../db';
 
-async function seed() {
-  await db.query(`DROP TABLE IF EXISTS user_followed_cities;`);
-  await db.query(`DROP TABLE IF EXISTS user_followed_tags;`);
-  await db.query(`DROP TABLE IF EXISTS user_follows;`);
-  await db.query(`DROP TABLE IF EXISTS user_events_participating;`);
-  await db.query(`DROP TABLE IF EXISTS user_events_saved;`);
-  await db.query(`DROP TABLE IF EXISTS users;`);
-
+export async function seedUsers() {
+  
   await db.query(`
     CREATE TABLE users (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
       alias VARCHAR(50) NOT NULL UNIQUE,
       bio TEXT,
-      profile_picture_url VARCHAR(255),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-
-  await db.query(`
-    CREATE TABLE user_follows (
-      follower_id INT NOT NULL,
-      following_id INT NOT NULL,
-      PRIMARY KEY (follower_id, following_id),
-      FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-  `);
-
-  await db.query(`
-    CREATE TABLE user_followed_tags (
-      user_id INT NOT NULL,
-      tag_id INT NOT NULL,
-      PRIMARY KEY (user_id, tag_id),
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-    );
-  `);
-
-  await db.query(`
-    CREATE TABLE user_followed_cities (
-      user_id INT NOT NULL,
-      city_id INT NOT NULL,
-      PRIMARY KEY (user_id, city_id),
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE CASCADE
-    );
-  `);
-
-  await db.query(`
-    CREATE TABLE user_events_saved (
-      user_id INT NOT NULL,
-      event_id INT NOT NULL,
-      PRIMARY KEY (user_id, event_id),
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
-    );
-  `);
-
-  await db.query(`
-    CREATE TABLE user_events_participating (
-      user_id INT NOT NULL,
-      event_id INT NOT NULL,
-      PRIMARY KEY (user_id, event_id),
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+      profile_picture_url VARCHAR(255)
     );
   `);
 
   await db.query(`
     INSERT INTO users (name, alias, bio, profile_picture_url) VALUES
-      ('Anna Svensson', 'anna_s', 'Älskar språk och god mat', 'https://example.com/profiles/anna.jpg'),
-      ('Erik Karlsson', 'erik_k', 'Vin, ost och trevliga samtal', 'https://example.com/profiles/erik.jpg'),
-      ('Sara Lind', 'saral', 'Pluggar spanska och älskar tapas', 'https://example.com/profiles/sara.jpg'),
-      ('Johan Berg', 'johanb', 'Matnörd och hobbykock', 'https://example.com/profiles/johan.jpg'),
-      ('Elin Nilsson', 'elin_n', 'Upptäcker nya restauranger varje vecka', 'https://example.com/profiles/elin.jpg'),
-      ('Martin Persson', 'martinp', 'Alltid på jakt efter nya viner', 'https://example.com/profiles/martin.jpg'),
-      ('Lisa Andersson', 'lisaa', 'Älskar att lära sig språk', 'https://example.com/profiles/lisa.jpg'),
-      ('David Eriksson', 'david_e', 'Reser och provar mat', 'https://example.com/profiles/david.jpg'),
-      ('Emma Johansson', 'emma_j', 'Kaffeälskare och språknörd', 'https://example.com/profiles/emma.jpg'),
-      ('Karin Olsson', 'karin_o', 'Vinprovningsfantast', 'https://example.com/profiles/karin.jpg');
+      ('Anna Svensson', 'anna_s', 'Älskar språk och god mat', NULL),
+      ('Erik Karlsson', 'erik_k', 'Vin, ost och trevliga samtal', NULL),
+      ('Sara Lind', 'saral', 'Pluggar spanska och älskar tapas', NULL),
+      ('Johan Berg', 'johanb', 'Matnörd och hobbykock', NULL),
+      ('Elin Nilsson', 'elin_n', 'Upptäcker nya restauranger varje vecka', NULL),
+      ('Martin Persson', 'martinp', 'Alltid på jakt efter nya viner', NULL),
+      ('Lisa Andersson', 'lisaa', 'Älskar att lära sig språk', NULL),
+      ('David Eriksson', 'david_e', 'Reser och provar mat', NULL),
+      ('Emma Johansson', 'emma_j', 'Kaffeälskare och språknörd', NULL),
+      ('Karin Olsson', 'karin_o', 'Vinprovningsfantast', NULL),
+      ('Alex Nilsson', 'alexn', 'Teknikintresserad och nyfiken', NULL),
+      ('Beatrice Holm', 'beatriceh', 'Gillar kultur och långa middagar', NULL),
+      ('Carl Wester', 'carlw', 'Jobbar med design och foto', NULL),
+      ('Daniel Fors', 'danielf', 'Tränar mycket och gillar hälsomat', NULL),
+      ('Felicia Berg', 'feliciab', 'Pluggar marknadsföring', NULL),
+      ('Gustav Lind', 'gustavl', 'Musik och vinylsamlingar', NULL),
+      ('Hanna Ek', 'hannae', 'Älskar att baka och laga mat', NULL),
+      ('Isak Nyström', 'isakn', 'Historienörd och museibesökare', NULL),
+      ('Julia Sand', 'julias', 'Reser så ofta jag kan', NULL),
+      ('Kevin Dahl', 'kevind', 'Spelar gitarr och skriver låtar', NULL),
+      ('Linnea Sjö', 'linneas', 'Yoga och mindfulness', NULL),
+      ('Markus Öberg', 'markuso', 'Backend-utvecklare', NULL),
+      ('Nora Vik', 'norav', 'Gillar second hand och hållbarhet', NULL),
+      ('Oskar Blom', 'oskarb', 'Sport, statistik och analyser', NULL),
+      ('Petra Lund', 'petral', 'Kommunikation och PR', NULL),
+      ('Quentin Moreau', 'quentinm', 'Mat och vin från hela världen', NULL),
+      ('Robin Åström', 'robina', 'Klättring och friluftsliv', NULL),
+      ('Sebastian Falk', 'sebastianf', 'Startup-idéer och entreprenörskap', NULL),
+      ('Tilda Norén', 'tildan', 'Illustration och digital konst', NULL),
+      ('Ulf Persson', 'ulfp', 'Gillar klassisk litteratur', NULL),
+      ('Viktor Hellström', 'viktorh', 'Cyklar överallt', NULL),
+      ('Wilma Gran', 'wilmag', 'Kaffeentusiast', NULL),
+      ('Xavier Dubois', 'xavierd', 'Internationella smaker och språk', NULL),
+      ('Yasmin Ali', 'yasmina', 'Sociala projekt och community', NULL),
+      ('Zara Pettersson', 'zarap', 'Mode och trendspaning', NULL),
+      ('Åsa Björk', 'asab', 'Jobbar med HR och ledarskap', NULL),
+      ('Björn Hjalmar', 'bjornh', 'Gillar fjällen och långfärdsskridskor', NULL),
+      ('Christer Lundqvist', 'christerl', 'Pensionerad men nyfiken', NULL),
+      ('Evelina Ryd', 'evelinar', 'Studerar psykologi', NULL),
+      ('Fredrik Malm', 'fredrikm', 'Projektledare inom IT', NULL),
+      ('Gunilla Strand', 'gunillas', 'Odlar i kolonilott', NULL),
+      ('Henrik Sjöberg', 'henriks', 'Intresserad av ekonomi och samhälle', NULL),
+      ('Ida Karlén', 'idak', 'Keramik och hantverk', NULL),
+      ('Jesper Holmgren', 'jesperh', 'Cyklar och vandrar', NULL),
+      ('Lovisa Eng', 'lovisae', 'Jobbar på museum', NULL),
+      ('Magnus Kihl', 'magnusk', 'Historielärare', NULL),
+      ('Niklas Rönn', 'niklasr', 'Löpning och maraton', NULL),
+      ('Rebecka Törn', 'rebeckat', 'Kommunikatör', NULL),
+      ('Stina Ahl', 'stinaa', 'Frilansskribent', NULL),
+      ('Tobias Wik', 'tobiasw', 'Datasäkerhet och nätverk', NULL),
+      ('Ahmed Hassan', 'ahmedh', 'Jobbar med logistik', NULL),
+      ('Aisha Noor', 'aishan', 'Pluggar till sjuksköterska', NULL),
+      ('Ali Rezaei', 'alir', 'Byggingenjör', NULL),
+      ('Amir Karimi', 'amirk', 'Startar eget företag', NULL),
+      ('Elena Petrova', 'elenap', 'Språklärare', NULL),
+      ('Fatima Zahra', 'fatimaz', 'Intresserad av nutrition', NULL),
+      ('Hassan El Amin', 'hassane', 'Jobbar natt', NULL),
+      ('Ivana Kovac', 'ivanak', 'HR-specialist', NULL),
+      ('Jamal Abdallah', 'jamala', 'Jobbar inom transport', NULL),
+      ('Katarina Novak', 'katarinan', 'Ekonomi och redovisning', NULL),
+      ('Leila Moradi', 'leilam', 'UX-designer', NULL),
+      ('Marco Rossi', 'marcor', 'Italiensk matentusiast', NULL),
+      ('Mohammed Saleh', 'mohammeds', 'Studerar juridik', NULL),
+      ('Nguyen Thi Lan', 'lannguyen', 'Älskar växter och te', NULL),
+      ('Omar Khalil', 'omark', 'Fastighetsförvaltning', NULL),
+      ('Paula Fernández', 'paulaf', 'Digital marknadsföring', NULL),
+      ('Rashid Khan', 'rashidk', 'Dataanalys', NULL),
+      ('Samira Youssef', 'samiray', 'Psykologi och samtal', NULL),
+      ('Svetlana Ivanova', 'svetlanai', 'Projektkoordinator', NULL),
+      ('Yusuf Demir', 'yusufd', 'Maskinteknik', NULL);
   `);
-
-  await db.query(`
-    INSERT INTO user_follows (follower_id, following_id) VALUES
-      (1, 2),
-      (1, 3),
-      (2, 1),
-      (3, 1),
-      (4, 1),
-      (5, 1),
-      (6, 2),
-      (7, 3),
-      (8, 1),
-      (9, 4),
-      (10, 2);
-  `);
-
-  await db.query(`
-    INSERT INTO user_followed_tags (user_id, tag_id) VALUES
-      (1, 1),
-      (1, 2),
-      (2, 2),
-      (3, 3),
-      (4, 1),
-      (5, 4),
-      (6, 5),
-      (7, 1),
-      (8, 2),
-      (9, 3),
-      (10, 4);
-  `);
-
-  await db.query(`
-    INSERT INTO user_followed_cities (user_id, city_id) VALUES
-      (1, 1),
-      (2, 3),
-      (3, 1),
-      (4, 2),
-      (5, 4),
-      (6, 5),
-      (7, 1),
-      (8, 2),
-      (9, 3),
-      (10, 4);
-  `);
-
-  await db.query(`
-    INSERT INTO user_events_saved (user_id, event_id) VALUES
-      (1, 1),
-      (2, 2),
-      (3, 1),
-      (4, 2),
-      (5, 1),
-      (6, 2);
-  `);
-
-  await db.query(`
-    INSERT INTO user_events_participating (user_id, event_id) VALUES
-      (1, 1),
-      (2, 2),
-      (3, 1),
-      (4, 2),
-      (5, 1),
-      (6, 2);
-  `);
-
-  console.log('✅ Users and all relations seeded');
-  process.exit(0);
 }
-
-seed().catch(err => {
-  console.error(err);
-  process.exit(1);
-});

@@ -1,10 +1,7 @@
 import { db } from '../db';
 
 export async function seedEvents() {
-  // Droppa events-tabellen om den finns
-
-  // await db.query(`DROP TABLE IF EXISTS events;`); // Droppa eventstabellen
-
+  
   await db.query(`
     CREATE TABLE events (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,7 +19,6 @@ export async function seedEvents() {
     );
   `);
 
-  // Insert events - 5 per kategori (exempeldata, du kan anpassa)
   await db.query(`
     INSERT INTO events 
       (title, description, category_id, restaurant_id, current_participants, price, date, start_time, end_time)
@@ -83,9 +79,8 @@ export async function seedEvents() {
   await db.query(`
     INSERT INTO event_tags (event_id, tag_id) VALUES
       (1, 1), (1, 2), (1, 3),       
-      (2, 4), (2, 5),
-      (3, 6), (3, 7),
-      (4, 8), (4, 9),
+      (2, 4), (2, 5), (3, 6), 
+      (3, 7), (4, 8), (4, 9),
       (5, 10),
 
       (6, 11), (6, 12), (7, 13),

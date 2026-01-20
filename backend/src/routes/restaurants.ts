@@ -23,7 +23,56 @@ router.get('/', async (req, res) => {
     res.json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Något gick fel vid hämtning av restauranger' });
+    res.status(500).json({ error: 'Kunde inte hämta restauranger' });
+  }
+});
+
+router.get('/search', async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+  return res.json([]);
+  }
+
+  const term = q.toString().toLowerCase();
+
+  try {
+    const [rows]: any[] = await db.query(
+      `
+      SELECT *
+      FROM restaurants
+      WHERE LOWER(name) LIKE ?
+      ORDER BY name ASC
+      `,
+      [`${term}%`]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Search error:', err);
+    res.status(500).json({ error: 'Kunde inte söka restauranger' });
+  }
+});
+
+router.get('/:id/events', async (req, res) => {
+  const restaurantId = Number(req.params.id);
+
+  try {
+    const [events] = await db.query(
+      `
+      SELECT *
+      FROM events
+      WHERE restaurant_id = ?
+        AND (date > CURDATE() OR (date = CURDATE() AND start_time > CURTIME()))
+      ORDER BY date ASC, start_time ASC
+      `,
+      [restaurantId]
+    );
+
+    res.json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Kunde inte hämta events' });
   }
 });
 
@@ -41,31 +90,8 @@ router.get('/:id', async (req, res) => {
     res.json(restaurant);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Något gick fel vid hämtning av restaurang' });
+    res.status(500).json({ error: 'Kunde inte hämta restaurang' });
   }
 });
-
-router.get('/:id/events', async (req, res) => {
-  const restaurantId = Number(req.params.id);
-
-  try {
-    const [events] = await db.query(
-      `
-      SELECT *
-      FROM events
-      WHERE restaurant_id = ?
-      AND start_datetime > NOW()
-      ORDER BY start_datetime ASC
-      `,
-      [restaurantId]
-    );
-
-    res.json(events);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Något gick fel vid hämtning av events' });
-  }
-});
-
 
 export default router;

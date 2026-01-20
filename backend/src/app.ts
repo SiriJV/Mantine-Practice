@@ -5,8 +5,13 @@ import categoriesRouter from './routes/categories';
 import tagsRouter from './routes/tags';
 import usersRouter from './routes/users';
 import citiesRouter from './routes/cities';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5175',
+}));
 
 app.use(express.json());
 

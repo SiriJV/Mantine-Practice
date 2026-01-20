@@ -1,8 +1,11 @@
 import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const db = mysql.createPool({
-  host: 'localhost',     // Ändra till din DB-host
-  user: 'root',          // Ditt DB-användarnamn
-  password: 'Spiri2005.',  // Ditt DB-lösenord
-  database: 'demo_app',  // Din databas
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });

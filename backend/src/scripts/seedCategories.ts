@@ -1,8 +1,7 @@
 import { db } from '../db';
 
 export async function seedCategories() {
-  // await db.query(`DROP TABLE IF EXISTS categories;`);
-
+  
   await db.query(`
     CREATE TABLE categories (
       id INT AUTO_INCREMENT PRIMARY KEY,

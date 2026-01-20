@@ -1,8 +1,7 @@
 import { db } from '../db';
 
-async function seed() {
-  await db.query(`DROP TABLE IF EXISTS cities;`);
-
+export async function seedCities() {
+  
   await db.query(`
     CREATE TABLE cities (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,7 +11,7 @@ async function seed() {
     `);
     
     await db.query(`
-        INSERT INTO cities (name, region) VALUES
+    INSERT INTO cities (name, region) VALUES
         ('Alingsås', 'Västra Götalands län'),
         ('Arboga', 'Västmanlands län'),
         ('Arvika', 'Värmlands län'),
@@ -111,12 +110,4 @@ async function seed() {
         ('Örebro', 'Örebro län'),
         ('Örnsköldsvik', 'Västernorrlands län');
   `);
-
-  console.log('✅ Cities table created and seeded');
-  process.exit(0);
 }
-
-seed().catch(err => {
-  console.error(err);
-  process.exit(1);
-});

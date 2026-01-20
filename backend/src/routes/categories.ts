@@ -3,10 +3,6 @@ import { db } from '../db';
 
 const router = Router();
 
-/**
- * GET /categories
- * Returns all categories
- */
 router.get('/', async (req, res) => {
   try {
     const [categories] = await db.query('SELECT * FROM categories ORDER BY id');
@@ -17,10 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * GET /categories/:id
- * Returns a single category by id (optional)
- */
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
 

@@ -3,11 +3,6 @@ import { db } from '../db';
 
 const router = Router();
 
-/**
- * GET /cities
- * Hämta alla städer, eller filtrera på söksträng i namn (query param "q")
- * Exempel: /cities?q=stock
- */
 router.get('/', async (req, res) => {
   const q = (req.query.q as string | undefined)?.toLowerCase();
 
@@ -30,11 +25,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * GET /cities/region/:region
- * Hämta alla städer som tillhör en viss region
- * Exempel: /cities/region/Skåne län
- */
 router.get('/region/:region', async (req, res) => {
   const region = req.params.region;
 
@@ -47,6 +37,33 @@ router.get('/region/:region', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Kunde inte hämta städer för regionen' });
+  }
+});
+
+router.get('/search', async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res.json([]);
+  }
+
+  const term = q.toString().toLowerCase();
+
+  try {
+    const [rows]: any[] = await db.query(
+      `
+      SELECT *
+      FROM cities
+      WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?
+      ORDER BY name ASC
+      `,
+      [`${term}%`, `% ${term}%`]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Search error:', err);
+    res.status(500).json({ error: 'Kunde inte söka städer' });
   }
 });
 

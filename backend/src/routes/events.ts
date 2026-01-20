@@ -52,11 +52,10 @@ router.get('/', async (req, res) => {
     params.push(date);
   }
 
-  // sortera efter pris eller datum
   if (order === 'price') {
-    sql += ` ORDER BY e.price ASC, e.date ASC, e.start_time ASC `;
-  } else if (order === 'date') {
-    sql += ` ORDER BY e.date ASC, e.start_time ASC `;
+    sql += ` ORDER BY e.price ASC, e.date ASC `;
+  } else if (order === 'availability') {
+    sql += ` ORDER BY spots_left DESC, e.date ASC `;
   } else {
     sql += ` ORDER BY e.date ASC, e.start_time ASC `;
   }
@@ -66,8 +65,31 @@ router.get('/', async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Could not fetch events' });
+    res.status(500).json({ error: 'Kunde inte hämta event' });
   }
+});
+
+router.get('/search', async (req, res) => {
+  const { q } = req.query;
+  if (!q) return res.json([]);
+
+  const term = q.toString().toLowerCase();
+
+  const [rows] = await db.query(
+    `
+    SELECT *
+    FROM events
+    WHERE date >= CURDATE()
+      AND (
+        LOWER(title) LIKE ?
+        OR LOWER(title) LIKE ?
+      )
+    ORDER BY date ASC, start_time ASC
+    `,
+    [`${term}%`, `% ${term}%`]
+  );
+
+  res.json(rows);
 });
 
 export default router;
